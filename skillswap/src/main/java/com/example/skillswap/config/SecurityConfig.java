@@ -18,18 +18,15 @@ public class SecurityConfig {
 
     private final RoleBasedAuthSuccessHandler successHandler;
 
-    // ❌ pehle yaha UserService tha, ab hata diya
     public SecurityConfig(RoleBasedAuthSuccessHandler successHandler) {
         this.successHandler = successHandler;
     }
 
-    // ✅ Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ DaoAuthenticationProvider with UserService injected automatically
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserService userService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -38,21 +35,29 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // ✅ AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
-    // ✅ Security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, DaoAuthenticationProvider authProvider) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Public pages
                         .requestMatchers("/", "/login", "/signup", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/admin-dashboard/**").hasRole("ADMIN")
-                        .requestMatchers("/user-dashboard/**").hasRole("USER")
+
+                        // Admin access
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Explicitly secure mutual matches
+                        .requestMatchers("/user/matchers", "/user/matchers/**").hasRole("USER")
+
+                        // General user routes
+                        .requestMatchers("/user/**").hasRole("USER")
+
+                        // All else must be authenticated
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -69,7 +74,6 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                // ✅ authentication provider register
                 .authenticationProvider(authProvider);
 
         return http.build();

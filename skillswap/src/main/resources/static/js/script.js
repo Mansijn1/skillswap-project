@@ -1,3 +1,21 @@
+// Profile Dropdown Menu Logic
+const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+if (profileDropdownBtn) {
+    profileDropdownBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevents the window click event from firing immediately
+        profileDropdownMenu.classList.toggle('hidden');
+    });
+}
+
+window.addEventListener('click', (event) => {
+    if (profileDropdownMenu && !profileDropdownBtn.contains(event.target)) {
+        if (!profileDropdownMenu.classList.contains('hidden')) {
+            profileDropdownMenu.classList.add('hidden');
+        }
+    }
+});
 // Hero Slider
 const slides = document.querySelectorAll('.slide');
 let currentSlide = 0;
@@ -41,4 +59,56 @@ aboutModal.addEventListener('click', (e) => {
   if (e.target === aboutModal) {
     aboutModal.classList.add('hidden');
   }
+});
+
+
+// FAQ Modal Logic
+const faqModal = document.getElementById('faqModal');
+const faqLink = document.getElementById('faqLink');
+const closeFaq = document.getElementById('closeFaq');
+const faqButtons = document.querySelectorAll('.faq-btn');
+
+function openFaqModal() {
+  faqModal.classList.remove('hidden');
+}
+
+// Add event listeners for the FAQ link
+if (faqLink) {
+  faqLink.addEventListener('click', openFaqModal);
+}
+
+// Add event listener to close the modal
+if (closeFaq) {
+  closeFaq.addEventListener('click', () => {
+    faqModal.classList.add('hidden');
+  });
+}
+
+// Add event listener for outside modal click
+if (faqModal) {
+    faqModal.addEventListener('click', (e) => {
+        if (e.target === faqModal) {
+            faqModal.classList.add('hidden');
+        }
+    });
+}
+
+// Collapsible FAQ answer logic
+faqButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const answer = button.nextElementSibling;
+        const icon = button.querySelector('.faq-icon');
+
+        // Hide all other answers
+        faqButtons.forEach(otherButton => {
+            if (otherButton !== button) {
+                otherButton.nextElementSibling.classList.add('hidden');
+                otherButton.querySelector('.faq-icon').classList.remove('rotate-45');
+            }
+        });
+
+        // Toggle the clicked answer
+        answer.classList.toggle('hidden');
+        icon.classList.toggle('rotate-45'); // Rotate the '+' icon
+    });
 });

@@ -31,4 +31,13 @@ public class User {
 
     @Column(nullable = false)
     private String role; // "USER" or "ADMIN"
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfile profile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private java.util.Set<SkillToLearn> skillsToLearn;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private java.util.Set<SkillToTeach> skillsToTeach;
 }

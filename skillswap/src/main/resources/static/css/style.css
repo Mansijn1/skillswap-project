@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 * {
@@ -8,69 +9,102 @@
 }
 
 body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* A subtle gradient for a modern, clean look */
+  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
   min-height: 100vh;
 }
 
-/* Navbar */
 .navbar {
+  /* Semi-transparent background with a blur effect */
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
 }
 
-/* Hero Slider */
+/* Hero Slider Container */
 .hero-slider {
-  height: 500px;
+  height: 500px; /* Defines the height of the slider on desktop */
   position: relative;
   overflow: hidden;
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Adds a soft shadow */
 }
 
+/* Individual Slides */
 .slide {
   position: absolute;
-  inset: 0;
+  inset: 0; /* A modern shortcut for top, right, bottom, left: 0 */
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
-  background-size: cover;
-  background-position: center;
+  transition: opacity 0.8s ease-in-out; /* Controls the fade effect */
+  background-size: cover; /* Ensures the image covers the entire slide */
+  background-position: center; /* Centers the background image */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .slide.active {
-  opacity: 1;
+  opacity: 1; /* Makes the slide fully visible */
 }
 
+/* Content Box Styling */
 .slide-content {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.2); /* Reduced opacity for more see-through effect */
   padding: 40px;
   border-radius: 15px;
   text-align: center;
   max-width: 600px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); /* Creates the "frosted glass" effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* A subtle shadow for the content box */
 }
 
-/* Search bar */
+/* Enhancements for better readability and responsiveness */
+.slide-content h1,
+.slide-content p {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Adds a slight shadow for text readability */
+}
+
+@media (max-width: 768px) {
+  .hero-slider {
+    height: 400px; /* Adjust height for smaller screens */
+  }
+
+  .slide-content {
+    padding: 20px; /* Reduce padding on mobile */
+  }
+}
+
+/* Updated search bar for a polished feel */
 .search-bar {
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Footer */
+/* Footer styling for a cohesive look */
 .footer {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(45, 55, 72, 0.9);
   backdrop-filter: blur(10px);
 }
 
-/* Skill cards */
+/* Skill cards with a subtle hover effect */
 .skill-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .skill-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Added styles for the profile edit page */
+.profile-form-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.profile-field {
+  margin-bottom: 1.5rem;
 }

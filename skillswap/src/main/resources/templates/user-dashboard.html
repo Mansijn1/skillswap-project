@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>User Dashboard - Profile</title>
+    <title>User Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -14,31 +14,35 @@
 </head>
 <body class="min-h-screen p-8">
 
-<div class="max-w-3xl mx-auto bg-white bg-opacity-80 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-gray-100 transition hover:shadow-indigo-200">
+<div class="max-w-4xl mx-auto bg-white bg-opacity-80 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-gray-100">
 
     <!-- Welcome Section -->
     <h1 class="text-3xl font-bold mb-8 text-gray-800">
-        👋 Hello,
-        <span th:text="${user.name}" class="text-indigo-600">User</span> <br>
-        <span class="text-lg font-normal text-gray-500">Here’s your learning & teaching journey</span>
+        👋 Welcome,
+        <span th:text="${user.username}" class="text-indigo-600">User</span>
     </h1>
 
     <!-- Profile Info -->
     <div class="flex items-center space-x-8 mb-10">
-        <img th:if="${user.photoUrl != null}" th:src="@{${user.photoUrl}}" alt="Profile Photo"
-             class="w-32 h-32 rounded-full object-cover border-4 border-indigo-300 shadow-md" />
-        <div th:if="${user.photoUrl == null}"
-             class="w-32 h-32 rounded-full bg-gradient-to-tr from-indigo-400 to-blue-300 flex items-center justify-center text-4xl font-bold text-white shadow-md">
-            <span th:text="${user.name.substring(0,1).toUpperCase()}">U</span>
+        <!-- Profile Image -->
+        <img th:if="${user.profile != null and user.profile.photoUrl != null}"
+             th:src="@{${user.profile.photoUrl}}" alt="Profile Photo"
+             class="w-28 h-28 rounded-full object-cover border-4 border-indigo-300 shadow-md" />
+
+        <div th:if="${user.profile == null or user.profile.photoUrl == null}"
+             class="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-400 to-blue-300 flex items-center justify-center text-3xl font-bold text-white shadow-md">
+            <span th:text="${user.username.substring(0,1).toUpperCase()}">U</span>
         </div>
+
+        <!-- User Info -->
         <div class="space-y-3">
             <p class="text-lg flex items-center gap-2">
                 📧 <span class="font-semibold">Email:</span>
-                <span th:text="${user.email}" class="text-gray-700">user@example.com</span>
+                <span th:text="${user.profile != null ? user.profile.email : 'N/A'}" class="text-gray-700">user@example.com</span>
             </p>
             <p class="text-lg flex items-center gap-2">
                 🌍 <span class="font-semibold">Pronouns:</span>
-                <span th:text="${user.pronouns}" class="text-gray-700">he/him</span>
+                <span th:text="${user.profile != null ? user.profile.pronouns : 'N/A'}" class="text-gray-700">he/him</span>
             </p>
         </div>
     </div>
@@ -46,44 +50,31 @@
     <!-- Skills to Learn -->
     <div class="mb-8">
         <h2 class="text-2xl font-bold mb-2 text-indigo-600">🎯 Skills You’re Excited to Learn</h2>
-        <p th:text="${#strings.arrayJoin(user.skillsToLearn, ', ')}" class="text-lg text-gray-700 italic">
-            JavaScript, React, UI/UX
-        </p>
+        <ul class="list-disc list-inside text-lg text-gray-700">
+            <li th:each="skill : ${user.skillsToLearn}" th:text="${skill.skill}">JavaScript</li>
+        </ul>
     </div>
 
     <!-- Skills to Teach -->
     <div class="mb-8">
         <h2 class="text-2xl font-bold mb-2 text-emerald-600">📚 Skills You’re Ready to Share</h2>
-        <p th:text="${#strings.arrayJoin(user.skillsToTeach, ', ')}" class="text-lg text-gray-700 italic">
-            HTML, CSS, SQL
-        </p>
+        <ul class="list-disc list-inside text-lg text-gray-700">
+            <li th:each="skill : ${user.skillsToTeach}" th:text="${skill.skill}">HTML</li>
+        </ul>
     </div>
 
-    <!-- Button -->
-    <a th:href="@{/profile/edit}"
-       class="inline-block bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:from-indigo-600 hover:to-blue-600 transition">
-        ✏️ Edit Profile
-    </a>
+    <!-- Buttons -->
+    <div class="flex gap-4">
+        <a th:href="@{/user/profile/edit}"
+           class="inline-block bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:from-indigo-600 hover:to-blue-600 transition">
+            ✏️ Edit Profile
+        </a>
+        <a th:href="@{/logout}"
+           class="inline-block bg-gray-800 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:bg-gray-900 transition">
+            🚪 Logout
+        </a>
+    </div>
 </div>
 
 </body>
 </html>
-
-
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title>User Dashboard</title>-->
-<!--    <script src="https://cdn.tailwindcss.com"></script>-->
-<!--</head>-->
-<!--<body class="min-h-screen bg-gray-50">-->
-<!--<div class="max-w-5xl mx-auto p-8">-->
-<!--    <h1 class="text-3xl font-bold mb-4">Welcome User</h1>-->
-<!--    <p class="mb-4">This is your dashboard. Only users with role <strong>USER</strong> can view this page.</p>-->
-<!--    <a th:href="@{/logout}" class="inline-block bg-gray-900 text-white rounded-lg px-4 py-2">Logout</a>-->
-<!--</div>-->
-<!--</body>-->
-<!--</html>-->

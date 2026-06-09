@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        body {
+          background: linear-gradient(135deg, #fafafa 0%, #eaeaea 100%);
+          font-family: 'Inter', sans-serif;
+          color: #2d3748;
+        }
+        .input-group { margin-bottom: 1.5rem; }
+
+        /* Custom styling for Select2 to match the Tailwind input style */
+        .select2-container--default .select2-selection--multiple {
+            border-radius: 0.75rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem;
+            min-height: 2.5rem;
+        }
+        .select2-container .select2-selection--multiple .select2-selection__choice {
+            background-color: #c4b5fd; /* Tag background */
+            color: #4338ca;
+            border: 1px solid #a78bfa;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6 flex items-center justify-center">
+
+<div class="max-w-3xl w-full bg-white bg-opacity-80 backdrop-blur-md rounded-3xl shadow-xl p-10 border border-gray-200 transition hover:shadow-2xl">
+    <h1 class="text-4xl font-extrabold mb-8 text-indigo-600 tracking-tight relative inline-block">
+        ✏️ Edit Your Profile
+        <span class="absolute left-0 bottom-0 w-full h-1 bg-indigo-200 rounded"></span>
+    </h1>
+
+    <form th:action="@{/user/profile/save}" method="post" enctype="multipart/form-data" class="space-y-8">
+        <div th:if="${warning}"
+             class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-xl shadow-sm"
+             role="alert">
+            <p th:text="${warning}" class="font-bold"></p>
+            <p>Please update your skills below to find successful skill swaps.</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8 border-b pb-6">
+            <div class="flex flex-col items-center">
+                <label class="block mb-3 font-semibold text-indigo-600">Current Photo</label>
+                <img th:if="${user.profile != null and user.profile.photoUrl != null}"
+                     th:src="@{${user.profile.photoUrl}}"
+                     alt="Profile Photo"
+                     class="w-28 h-28 rounded-full object-cover border-4 border-indigo-300 shadow-md hover:scale-105 transition-transform" />
+
+                <div th:if="${user.profile == null or user.profile.photoUrl == null}"
+                     class="w-28 h-28 rounded-full bg-indigo-200 flex items-center justify-center text-5xl font-bold text-indigo-900 shadow-md">
+                    <span th:text="${user.username.substring(0,1).toUpperCase()}">U</span>
+                </div>
+            </div>
+
+            <div class="md:mt-12 w-full md:w-auto">
+                <label for="photo" class="block mb-2 font-semibold text-indigo-600 cursor-pointer">Change Profile Photo</label>
+                <input type="file" id="photo" name="photo" accept="image/*"
+                       class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-indigo-100 file:text-indigo-700
+                        hover:file:bg-indigo-200 transition" />
+            </div>
+        </div>
+        <h2 class="text-2xl font-bold text-indigo-600 pt-4">Basic Information</h2>
+
+        <div class="input-group">
+            <label for="fullName" class="block font-semibold mb-2 text-indigo-600">Full Name</label>
+            <input type="text" id="fullName" name="fullName"
+                   th:value="${user.profile != null ? user.profile.fullName : ''}" required
+                   class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" />
+        </div>
+
+        <div class="input-group">
+            <label for="email" class="block font-semibold mb-2 text-indigo-600">Email</label>
+            <input type="email" id="email" name="email"
+                   th:value="${user.profile != null ? user.profile.email : ''}" required
+                   class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" />
+        </div>
+
+        <div class="input-group">
+            <label for="pronouns" class="block font-semibold mb-2 text-indigo-600">Pronouns (Optional)</label>
+            <input type="text" id="pronouns" name="pronouns"
+                   th:value="${user.profile != null ? user.profile.pronouns : ''}"
+                   placeholder="e.g., He/Him, She/Her, They/Them"
+                   class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" />
+        </div>
+
+        <div class="input-group">
+            <label for="location" class="block font-semibold mb-2 text-indigo-600">Location (City/Region)</label>
+            <input type="text" id="location" name="location"
+                   th:value="${user.profile != null ? user.profile.location : ''}"
+                   placeholder="e.g., Delhi, California"
+                   class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" />
+        </div>
+
+        <h2 class="text-2xl font-bold text-emerald-600 pt-4 border-t mt-8">Skills Exchange</h2>
+
+        <div class="input-group">
+            <label for="skillsToLearn" class="block font-semibold mb-2 text-indigo-600">Skills to Learn</label>
+
+            <select id="skillsToLearn" name="skillsToLearn" multiple="multiple"
+                    class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+
+                <option th:each="skill : ${allAvailableSkills}"
+                        th:value="${skill}"
+                        th:text="${skill}"
+
+                        th:selected="${user.skillsToLearn.![skill].contains(skill)}">
+                </option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="skillsToTeach" class="block font-semibold mb-2 text-indigo-600">Skills to Teach</label>
+
+            <select id="skillsToTeach" name="skillsToTeach" multiple="multiple"
+                    class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+
+                <option th:each="skill : ${allAvailableSkills}"
+                        th:value="${skill}"
+                        th:text="${skill}"
+                        th:selected="${user.skillsToTeach.![skill].contains(skill)}">
+                </option>
+            </select>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+            <button type="submit"
+                    class="bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl shadow hover:bg-indigo-600 hover:shadow-lg transition">
+                💾 Save Profile
+            </button>
+            <a th:href="@{/user/dashboard}" class="self-center text-indigo-600 font-semibold hover:underline transition">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for both skill fields
+        $('#skillsToLearn, #skillsToTeach').select2({
+            tags: true, // This enables the "Other" / manual typing feature
+            tokenSeparators: [',', ' '],
+            placeholder: "Select or type new skills..."
+        });
+
+        // Preload existing selections by using the values set by Thymeleaf
+        var currentLearnSkills = [[${user.skillsToLearn.![skill]}]];
+        $('#skillsToLearn').val(currentLearnSkills).trigger('change');
+
+        var currentTeachSkills = [[${user.skillsToTeach.![skill]}]];
+        $('#skillsToTeach').val(currentTeachSkills).trigger('change');
+    });
+</script>
+
+</body>
+</html>
